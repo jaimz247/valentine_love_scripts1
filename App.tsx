@@ -19,7 +19,10 @@ import {
   Twitter,
   Link as LinkIcon,
   Sparkles,
-  ArrowDown
+  ArrowDown,
+  Send,
+  User,
+  BadgeCheck
 } from 'lucide-react';
 import { MODULES, TESTIMONIALS, FAQS, PRICE, ORIGINAL_PRICE, PURCHASE_URL } from './constants';
 
@@ -43,6 +46,84 @@ const TruncatedAnswer: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
+const GuaranteeBadge: React.FC = () => {
+  return (
+    <div className="badge-container relative w-32 h-32 flex items-center justify-center">
+      <div className="badge-spin absolute inset-0 border-2 border-dashed border-rose-200 rounded-full"></div>
+      <div className="bg-rose-600 text-white rounded-full w-24 h-24 flex flex-col items-center justify-center text-center p-2 shadow-xl animate-pulse-soft z-10 border-4 border-rose-500">
+        <ShieldCheck size={20} className="mb-1" />
+        <span className="text-[10px] font-black leading-tight uppercase">30-Day Money Back</span>
+      </div>
+    </div>
+  );
+};
+
+const LiveChat: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<{role: 'agent' | 'user', text: string}[]>([
+    { role: 'agent', text: 'Hey there! Nina James team here. Have a question about the Love Script Vault?' }
+  ]);
+  const [input, setInput] = useState('');
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    setMessages(prev => [...prev, { role: 'user', text: input }]);
+    setInput('');
+    setTimeout(() => {
+      setMessages(prev => [...prev, { role: 'agent', text: "I've passed your question to Nina. In the meantime, did you see our 30-day guarantee? It makes your purchase 100% risk-free!" }]);
+    }, 1000);
+  };
+
+  return (
+    <div className="fixed bottom-8 left-8 z-[100] flex flex-col items-start">
+      {isOpen && (
+        <div className="bg-white w-80 h-96 rounded-3xl shadow-2xl border border-slate-100 mb-4 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
+          <div className="bg-rose-600 p-4 text-white flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center">
+                <User size={18} />
+              </div>
+              <div>
+                <p className="font-bold text-sm">Nina James Support</p>
+                <p className="text-[10px] opacity-80 uppercase tracking-widest">Online</p>
+              </div>
+            </div>
+            <button onClick={() => setIsOpen(false)}><X size={20} /></button>
+          </div>
+          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-rose-600 text-white' : 'bg-white text-slate-700 shadow-sm'}`}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <form onSubmit={handleSend} className="p-3 border-t bg-white flex items-center space-x-2">
+            <input 
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..." 
+              className="flex-1 bg-slate-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-200"
+            />
+            <button type="submit" className="bg-rose-600 text-white p-2 rounded-full hover:bg-rose-700 transition-colors">
+              <Send size={16} />
+            </button>
+          </form>
+        </div>
+      )}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:bg-rose-600 transition-all transform hover:scale-110 active:scale-95 group flex items-center space-x-3"
+      >
+        <MessageCircle size={24} />
+        {!isOpen && <span className="font-bold text-sm pr-2">Chat with us</span>}
+      </button>
+    </div>
+  );
+};
+
 const TestimonialCard: React.FC<{ testimonial: any; index: number }> = ({ testimonial, index }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -52,10 +133,11 @@ const TestimonialCard: React.FC<{ testimonial: any; index: number }> = ({ testim
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          // Don't unobserve yet if we want re-triggers, but usually for entrance we do.
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.2 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -64,13 +146,13 @@ const TestimonialCard: React.FC<{ testimonial: any; index: number }> = ({ testim
   return (
     <div 
       ref={ref}
-      style={{ animationDelay: `${index * 150}ms` }}
-      className={`bg-slate-50 p-8 rounded-3xl relative transition-all duration-700 ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-10'}`}
+      style={{ animationDelay: `${index * 200}ms` }}
+      className={`bg-slate-50 p-8 rounded-3xl relative transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-20'}`}
     >
       <div className="absolute -top-4 -left-4 text-6xl text-rose-200 serif select-none">"</div>
-      <p className="text-slate-700 italic mb-8 relative z-10">{testimonial.quote}</p>
+      <p className="text-slate-700 italic mb-8 relative z-10 leading-relaxed">{testimonial.quote}</p>
       <div className="flex items-center">
-        <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full mr-4 border-2 border-rose-200" />
+        <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full mr-4 border-2 border-rose-200 shadow-sm" />
         <div>
           <h4 className="font-bold text-slate-900">{testimonial.name}</h4>
           <p className="text-xs text-slate-500 uppercase tracking-widest">{testimonial.title}</p>
@@ -85,12 +167,13 @@ const App: React.FC = () => {
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   
-  // A/B Test State
   const [ctaVariation, setCtaVariation] = useState<'A' | 'B'>('A');
 
+  const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   useEffect(() => {
-    // Basic A/B test assignment
     const savedVariation = localStorage.getItem('love_vault_cta_var');
     if (savedVariation === 'A' || savedVariation === 'B') {
       setCtaVariation(savedVariation as 'A' | 'B');
@@ -101,6 +184,10 @@ const App: React.FC = () => {
     }
 
     const handleScroll = () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      setScrollProgress(scrolled);
       setIsScrolled(window.scrollY > 50);
       setShowScrollTop(window.scrollY > 300);
     };
@@ -130,31 +217,43 @@ const App: React.FC = () => {
     window.open(PURCHASE_URL, '_blank');
   };
 
-  const shareOnTwitter = () => {
-    const text = encodeURIComponent("Stop winging your most important conversations. Get the Valentine's Love Script Vault! ❤️");
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-  };
-
-  const shareOnFacebook = () => {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-  };
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
+  const toggleFaq = (i: number) => {
+    const isClosing = activeFaq === i;
+    const nextValue = isClosing ? null : i;
+    setActiveFaq(nextValue);
+    
+    // Improved smooth scroll behavior for both expand and collapse
+    setTimeout(() => {
+      if (faqRefs.current[i]) {
+        if (!isClosing) {
+          // When opening, scroll the item into view
+          faqRefs.current[i]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        } else {
+          // When closing, ensure the header is still visible by scrolling to top of the item
+          faqRefs.current[i]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        }
+      }
+    }, 150); // Small delay to let the grid transition begin
   };
 
   const ctaText = ctaVariation === 'A' ? 'Claim My Scripts' : 'Get Instant Access';
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-rose-100 selection:text-rose-900">
+      {/* Scroll Progress Bar */}
+      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }}></div>
+
       {/* Sticky Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-3' : 'bg-transparent py-5'}`}>
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Heart className="text-rose-600 fill-rose-600" size={24} />
+          <div className="flex items-center space-x-2 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            <Heart className="text-rose-600 fill-rose-600 transition-transform group-hover:scale-125" size={24} />
             <span className="font-bold text-xl tracking-tight uppercase">Love Script Vault</span>
           </div>
           <div className="hidden md:flex items-center space-x-8">
@@ -164,7 +263,7 @@ const App: React.FC = () => {
           </div>
           <button 
             onClick={() => scrollToSection('pricing')}
-            className="bg-rose-600 text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-rose-300"
+            className="bg-rose-600 text-white px-6 py-2 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-rose-300 cta-hover-pulse"
           >
             {ctaText}
           </button>
@@ -181,18 +280,15 @@ const App: React.FC = () => {
             Curiosity Hook: Is communication the missing link?
           </div>
           <h1 className="text-4xl md:text-7xl font-black text-slate-900 leading-tight mb-8 max-w-5xl mx-auto">
-            Stop Winging Your Most <span className="text-rose-600 italic font-medium serif">Important Conversations</span>
+            Stop Winging Your Most <span className="text-rose-600 italic font-medium serif transition-all duration-500 hover:text-rose-500">Important Conversations</span>
           </h1>
           <p className="text-xl md:text-3xl font-bold text-slate-700 mb-6 max-w-4xl mx-auto">
             87+ Word-For-Word Scripts That Turn Disconnection Into Deep Intimacy
           </p>
-          <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto italic font-medium">
-            (Without Sounding Rehearsed or Fake)
-          </p>
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
             <button 
               onClick={() => scrollToSection('pricing')}
-              className="group bg-rose-600 text-white px-8 py-5 rounded-2xl font-black text-xl md:text-2xl uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-110 active:scale-95 shadow-2xl shadow-rose-200 w-full md:w-auto overflow-hidden relative"
+              className="group bg-rose-600 text-white px-8 py-5 rounded-2xl font-black text-xl md:text-2xl uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-110 active:scale-95 shadow-2xl shadow-rose-200 w-full md:w-auto overflow-hidden relative cta-hover-pulse"
             >
               <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-[-20deg]"></div>
               <span className="flex items-center justify-center relative z-10">
@@ -218,35 +314,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Promise Bullets Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-black text-center mb-16 underline decoration-rose-200 underline-offset-8">Inside This Vault, You'll Discover:</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {[
-                { title: "The 'Invisible Labor Inventory'", desc: "Get your partner to FINALLY see (and share) the mental load without nagging." },
-                { title: "The 2-Minute 'Emergency Brake'", desc: "Stop fights from turning into relationship-ending blowups instantly." },
-                { title: "The 'I'm Not Your Manager' Script", desc: "Transform weaponized incompetence into actual partnership." },
-                { title: "Modern Sincere Apologies", desc: "How to say 'I'm sorry' so they actually believe you and move on." },
-                { title: "The 'What Are We?' Framework", desc: "Clear the anxiety of a new relationship without scaring them off." },
-                { title: "Sexual Reconnection Scripts", desc: "How to ask for what you need when intimacy feels like a chore." }
-              ].map((item, i) => (
-                <div key={i} className="group flex space-x-4 p-6 rounded-2xl border border-slate-100 hover:border-rose-200 hover:bg-rose-50/30 transition-all duration-300 hover:scale-[1.02]">
-                  <div className="flex-shrink-0 bg-rose-100 rounded-full w-12 h-12 flex items-center justify-center group-hover:bg-rose-600 group-hover:rotate-[360deg] transition-all duration-500">
-                    <Check className="text-rose-600 group-hover:text-white" size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-slate-900 mb-2 group-hover:text-rose-600 transition-colors">{item.title}</h3>
-                    <p className="text-slate-600 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Vault breakdown */}
       <section id="vault" className="py-24 bg-white">
         <div className="container mx-auto px-4">
@@ -258,12 +325,12 @@ const App: React.FC = () => {
             {MODULES.map((mod) => (
               <div 
                 key={mod.id} 
-                className="group bg-slate-50 p-8 rounded-[2rem] border-2 border-transparent hover:border-rose-300 transition-all duration-300 hover:bg-white hover:shadow-2xl hover:shadow-rose-100/50 hover:scale-[1.02]"
+                className="group bg-slate-50 p-8 rounded-[2rem] border-2 border-transparent hover:border-rose-300 transition-all duration-300 hover:bg-white hover:shadow-2xl hover:shadow-rose-100/50 hover:scale-[1.02] cursor-default"
               >
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <span className="bg-rose-100 text-rose-600 text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Module {mod.id}</span>
-                    <h3 className="text-2xl font-black text-slate-900">{mod.title}</h3>
+                    <h3 className="text-2xl font-black text-slate-900 group-hover:text-rose-600 transition-colors">{mod.title}</h3>
                     <p className="text-rose-500 font-bold italic">{mod.subtitle}</p>
                   </div>
                   <div className="bg-white px-4 py-2 rounded-2xl shadow-sm text-center border border-slate-100 group-hover:border-rose-100 transition-colors">
@@ -288,60 +355,85 @@ const App: React.FC = () => {
 
       {/* Pricing Section with Visual Flourish */}
       <section id="pricing" className="py-24 bg-rose-50 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-white rounded-[3rem] shadow-2xl overflow-hidden border-4 border-rose-600 relative z-10 transition-transform hover:scale-[1.01] duration-500">
-            <div className="bg-rose-600 text-white text-center py-6 relative">
-              <span className="font-black text-xl uppercase tracking-widest">Limited Time: One-Time Payment</span>
-              <div className="absolute right-8 top-1/2 -translate-y-1/2 bg-yellow-400 text-slate-900 text-[10px] font-black px-2 py-1 rounded-md rotate-12 animate-pulse shadow-sm">
-                SAVE 90%
+        <div className="container mx-auto px-4 flex flex-col items-center">
+          <div className="max-w-4xl w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden border-4 border-rose-600 relative z-10 pricing-card transition-all duration-700 hover:shadow-rose-200/60">
+            {/* Enhanced Ribbon with Looping Glow */}
+            <div className="ribbon">
+              <span className="ribbon-inner animate-ribbon-glow">Most Popular</span>
+            </div>
+            
+            <div className="bg-rose-600 text-white text-center py-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none"></div>
+              <div className="flex items-center justify-center space-x-3 relative z-10 animate-soft-attention">
+                <BadgeCheck size={24} className="text-yellow-400" />
+                <span className="font-black text-xl uppercase tracking-widest">Flash Sale: 90% Discount Applied</span>
               </div>
             </div>
-            <div className="p-8 md:p-16 text-center relative">
-              <div className="absolute top-8 left-1/2 -translate-x-1/2 flex justify-center opacity-20 pointer-events-none">
-                 <Sparkles className="text-rose-600" size={120} />
-              </div>
 
-              <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase tracking-tighter relative z-10">Start Communicating Better Today</h2>
-              
-              <div className="flex items-center justify-center mb-12 relative z-10">
-                <span className="text-slate-400 text-3xl line-through mr-4 font-bold opacity-60">${ORIGINAL_PRICE}</span>
-                <span className="text-rose-600 text-7xl md:text-9xl font-black tracking-tighter flex items-center">
-                  <span className="relative">
-                    ${PRICE}
-                    <ArrowDown className="absolute -top-12 -right-8 text-rose-600 animate-bounce" size={40} />
-                  </span>
-                </span>
-                <span className="text-rose-600 text-2xl font-bold ml-2 self-start mt-4">USD</span>
-              </div>
-
-              <button 
-                onClick={redirectToPurchase}
-                className="group w-full max-w-md bg-rose-600 text-white px-10 py-6 rounded-[2rem] font-black text-2xl md:text-3xl uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-105 shadow-2xl shadow-rose-200 mb-8 overflow-hidden relative"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[0%] transition-transform duration-300"></div>
-                <span className="flex items-center justify-center relative z-10">
-                  {ctaText}
-                  <ArrowRightCircle className="ml-4 group-hover:rotate-45 transition-transform duration-300" />
-                </span>
-              </button>
-
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="flex items-center text-slate-500 font-bold text-sm bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
-                  <Lock size={16} className="mr-2 text-green-500" />
-                  256-BIT SECURE CHECKOUT
+            <div className="p-8 md:p-16 text-center relative flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tighter leading-tight">Everything You Need To <span className="text-rose-600">Rebuild Intimacy</span></h2>
+                
+                <div className="space-y-4 mb-8">
+                  {["87+ Therapist-Grade Scripts", "Lifetime Access & Free Updates", "7 Specialized Scenario Modules", "The Date Night Directory Bonus"].map((item, i) => (
+                    <div key={i} className="flex items-center space-x-3 text-slate-700 font-bold group">
+                      <div className="bg-green-100 p-1 rounded-full group-hover:bg-green-600 transition-colors"><Check className="text-green-600 group-hover:text-white" size={16} /></div>
+                      <span className="group-hover:translate-x-1 transition-transform">{item}</span>
+                    </div>
+                  ))}
                 </div>
+
+                <div className="flex items-center justify-center md:justify-start space-x-4 mb-8">
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xl line-through font-bold opacity-60">Value: ${ORIGINAL_PRICE}</span>
+                    <div className="flex items-baseline">
+                      <span className="text-rose-600 text-6xl md:text-8xl font-black tracking-tighter relative drop-shadow-sm">
+                        ${PRICE}
+                        <ArrowDown className="absolute -top-12 -right-8 text-rose-600 animate-bounce hidden md:block" size={40} />
+                      </span>
+                      <span className="text-rose-600 text-xl font-bold ml-2">USD</span>
+                    </div>
+                  </div>
+                  <div className="ml-auto hidden lg:block">
+                    <GuaranteeBadge />
+                  </div>
+                </div>
+
+                <button 
+                  onClick={redirectToPurchase}
+                  className="group w-full bg-rose-600 text-white px-10 py-6 rounded-[2rem] font-black text-2xl md:text-3xl uppercase tracking-widest hover:bg-rose-700 transition-all transform hover:scale-105 active:scale-95 shadow-2xl shadow-rose-200 mb-8 overflow-hidden relative cta-hover-pulse"
+                >
+                  <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[0%] transition-transform duration-300"></div>
+                  <span className="flex items-center justify-center relative z-10">
+                    {ctaText}
+                    <ArrowRightCircle className="ml-4 group-hover:rotate-45 transition-transform duration-300" />
+                  </span>
+                </button>
+              </div>
+              
+              <div className="hidden md:flex flex-col items-center space-y-6 lg:hidden">
+                <GuaranteeBadge />
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 py-6 border-t border-slate-100 flex flex-wrap justify-center items-center gap-8">
+              <div className="flex items-center space-x-2 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                <Lock size={14} className="text-green-500" />
+                <span>Secure SSL Encryption</span>
+              </div>
+              <div className="flex items-center space-x-2 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                <Clock size={14} className="text-rose-500" />
+                <span>Offer ends soon</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials with entrance animation */}
+      {/* Testimonials with staggered animation */}
       <section className="py-24 bg-white overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black uppercase tracking-tighter">Real Humans. Real Results.</h2>
-          </div>
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-black uppercase tracking-tighter mb-16">Real Couples. Real Breakthroughs.</h2>
           <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
             {TESTIMONIALS.map((t, i) => (
               <TestimonialCard key={i} testimonial={t} index={i} />
@@ -350,16 +442,20 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Section with smooth slide animation */}
+      {/* FAQ Section with Refined Transitions */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl font-black text-center mb-16 uppercase tracking-tighter">Common Questions</h2>
             <div className="space-y-4">
               {FAQS.map((faq, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div 
+                  key={i} 
+                  ref={el => faqRefs.current[i] = el}
+                  className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
                   <button 
-                    onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                    onClick={() => toggleFaq(i)}
                     className="w-full p-6 text-left flex justify-between items-center group transition-colors duration-300"
                   >
                     <span className={`font-bold text-lg transition-colors ${activeFaq === i ? 'text-rose-600' : 'text-slate-900 group-hover:text-rose-600'}`}>{faq.question}</span>
@@ -379,40 +475,20 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Share Section */}
-      <section className="py-20 bg-rose-600 text-white overflow-hidden relative">
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none">
-          <Share2 size={300} />
-        </div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="inline-block p-4 bg-white/20 rounded-full mb-6">
-            <Share2 className="animate-pulse" size={48} />
-          </div>
-          <h2 className="text-3xl font-black mb-4 uppercase tracking-tighter">Spread The Impact</h2>
-          <p className="mb-10 text-rose-100 max-w-xl mx-auto text-lg">One script could be the difference between a breakup and a breakthrough. Help someone you care about.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button 
-              onClick={shareOnFacebook}
-              className="group flex items-center space-x-2 bg-white/10 hover:bg-white hover:text-rose-600 transition-all px-6 py-3 rounded-xl border border-white/20 font-bold"
-            >
-              <Facebook size={20} className="group-hover:scale-110 transition-transform" />
-              <span>Facebook</span>
-            </button>
-            <button 
-              onClick={shareOnTwitter}
-              className="group flex items-center space-x-2 bg-white/10 hover:bg-white hover:text-rose-600 transition-all px-6 py-3 rounded-xl border border-white/20 font-bold"
-            >
-              <Twitter size={20} className="group-hover:scale-110 transition-transform" />
-              <span>Twitter</span>
-            </button>
-            <button 
-              onClick={copyLink}
-              className="group flex items-center space-x-2 bg-white/10 hover:bg-white hover:text-rose-600 transition-all px-6 py-3 rounded-xl border border-white/20 font-bold"
-            >
-              <LinkIcon size={20} className="group-hover:scale-110 transition-transform" />
-              <span>Copy Link</span>
-            </button>
-          </div>
+      {/* Final CTA with Glow */}
+      <section className="py-24 bg-rose-600 text-white text-center relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Your relationship is worth $27.</h2>
+          <p className="text-xl md:text-2xl mb-12 text-rose-100 max-w-2xl mx-auto">
+            Stop letting small misunderstandings turn into huge divides. Use the vault and communicate with confidence today.
+          </p>
+          <button 
+            onClick={redirectToPurchase}
+            className="group bg-white text-rose-600 px-12 py-6 rounded-[2rem] font-black text-2xl uppercase tracking-widest hover:bg-rose-50 transition-all transform hover:scale-110 active:scale-95 shadow-2xl cta-hover-pulse animate-glow-pulse"
+          >
+            Get The Vault Now
+          </button>
+          <p className="mt-8 opacity-75 font-medium italic">Instant download. Secure checkout. 30-day guarantee.</p>
         </div>
       </section>
 
@@ -426,6 +502,8 @@ const App: React.FC = () => {
           <p className="mb-4">© 2024 Nina James & The Valentine's Love Script Vault. All rights reserved.</p>
         </div>
       </footer>
+
+      <LiveChat />
 
       {/* Scroll to Top Button */}
       {showScrollTop && (
@@ -461,7 +539,7 @@ const App: React.FC = () => {
                 <p className="text-slate-600 mb-8">Better conversations or your money back. 30-day guarantee.</p>
                 <button 
                   onClick={redirectToPurchase}
-                  className="group w-full bg-rose-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-rose-200 hover:bg-rose-700 transition-all relative overflow-hidden"
+                  className="group w-full bg-rose-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-rose-200 hover:bg-rose-700 transition-all transform hover:scale-105 relative overflow-hidden cta-hover-pulse"
                 >
                   <span className="relative z-10">{ctaText} — ${PRICE}</span>
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[0] transition-transform duration-300"></div>
