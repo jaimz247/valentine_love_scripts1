@@ -26,34 +26,6 @@ import {
 } from 'lucide-react';
 import { MODULES, TESTIMONIALS, FAQS, PRICE, ORIGINAL_PRICE, PURCHASE_URL } from './constants';
 
-const PIXEL_ID = '1523624709320763';
-
-const initFacebookPixel = () => {
-  if (typeof window === 'undefined') return;
-  
-  const w = window as any;
-  if (w.fbq) return;
-  
-  const n = (w.fbq = function() {
-    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-  }) as any;
-  
-  if (!w._fbq) w._fbq = n;
-  n.push = n;
-  n.loaded = !0;
-  n.version = '2.0';
-  n.queue = [];
-  
-  const t = document.createElement('script');
-  t.async = !0;
-  t.src = 'https://connect.facebook.net/en_US/fbevents.js';
-  const s = document.getElementsByTagName('script')[0];
-  s.parentNode?.insertBefore(t, s);
-
-  w.fbq('init', PIXEL_ID);
-  w.fbq('track', 'PageView');
-};
-
 const TruncatedAnswer: React.FC<{ text: string }> = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = text.length > 150;
@@ -200,9 +172,6 @@ const App: React.FC = () => {
   const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    // Safely initialize FB Pixel after component mount to avoid build-time HTML issues
-    initFacebookPixel();
-
     const savedVariation = localStorage.getItem('love_vault_cta_var');
     if (savedVariation === 'A' || savedVariation === 'B') {
       setCtaVariation(savedVariation as 'A' | 'B');
@@ -242,8 +211,6 @@ const App: React.FC = () => {
   };
 
   const redirectToPurchase = () => {
-    console.log(`Tracking: Clicked CTA variation ${ctaVariation}`);
-    
     // FB Pixel Conversion Tracking
     const w = window as any;
     if (typeof w.fbq === 'function') {
@@ -254,7 +221,6 @@ const App: React.FC = () => {
         content_category: 'Digital Product'
       });
     }
-    
     window.open(PURCHASE_URL, '_blank');
   };
 
@@ -512,7 +478,7 @@ const App: React.FC = () => {
           </p>
           <button 
             onClick={redirectToPurchase}
-            className="group bg-white text-rose-600 px-12 py-6 rounded-[2rem] font-black text-2xl uppercase tracking-widest hover:bg-rose-50 transition-all transform hover:scale-110 active:scale-95 shadow-2xl cta-hover-pulse animate-glow-pulse"
+            className="group bg-white text-rose-600 px-12 py-6 rounded-[2rem] font-black text-2xl uppercase tracking-widest hover:bg-rose-50 transition-all transform hover:scale-110 active:scale-90 shadow-2xl cta-hover-pulse animate-glow-pulse"
           >
             Get The Vault Now
           </button>
