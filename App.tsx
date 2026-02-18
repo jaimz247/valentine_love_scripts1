@@ -26,6 +26,34 @@ import {
 } from 'lucide-react';
 import { MODULES, TESTIMONIALS, FAQS, PRICE, ORIGINAL_PRICE, PURCHASE_URL } from './constants';
 
+const PIXEL_ID = '1523624709320763';
+
+const initFacebookPixel = () => {
+  if (typeof window === 'undefined') return;
+  
+  const w = window as any;
+  if (w.fbq) return;
+  
+  const n = (w.fbq = function() {
+    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+  }) as any;
+  
+  if (!w._fbq) w._fbq = n;
+  n.push = n;
+  n.loaded = !0;
+  n.version = '2.0';
+  n.queue = [];
+  
+  const t = document.createElement('script');
+  t.async = !0;
+  t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+  const s = document.getElementsByTagName('script')[0];
+  s.parentNode?.insertBefore(t, s);
+
+  w.fbq('init', PIXEL_ID);
+  w.fbq('track', 'PageView');
+};
+
 const TruncatedAnswer: React.FC<{ text: string }> = ({ text }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = text.length > 150;
@@ -133,7 +161,6 @@ const TestimonialCard: React.FC<{ testimonial: any; index: number }> = ({ testim
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          // Don't unobserve yet if we want re-triggers, but usually for entrance we do.
           observer.unobserve(entry.target);
         }
       },
@@ -168,12 +195,14 @@ const App: React.FC = () => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  
   const [ctaVariation, setCtaVariation] = useState<'A' | 'B'>('A');
 
   const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    // Safely initialize FB Pixel after component mount to avoid build-time HTML issues
+    initFacebookPixel();
+
     const savedVariation = localStorage.getItem('love_vault_cta_var');
     if (savedVariation === 'A' || savedVariation === 'B') {
       setCtaVariation(savedVariation as 'A' | 'B');
@@ -214,15 +243,18 @@ const App: React.FC = () => {
 
   const redirectToPurchase = () => {
     console.log(`Tracking: Clicked CTA variation ${ctaVariation}`);
+    
     // FB Pixel Conversion Tracking
-    if (typeof (window as any).fbq === 'function') {
-      (window as any).fbq('track', 'InitiateCheckout', {
+    const w = window as any;
+    if (typeof w.fbq === 'function') {
+      w.fbq('track', 'InitiateCheckout', {
         value: PRICE,
         currency: 'USD',
         content_name: "Valentine's Love Script Vault",
         content_category: 'Digital Product'
       });
     }
+    
     window.open(PURCHASE_URL, '_blank');
   };
 
@@ -231,34 +263,29 @@ const App: React.FC = () => {
     const nextValue = isClosing ? null : i;
     setActiveFaq(nextValue);
     
-    // Improved smooth scroll behavior for both expand and collapse
     setTimeout(() => {
       if (faqRefs.current[i]) {
         if (!isClosing) {
-          // When opening, scroll the item into view
           faqRefs.current[i]?.scrollIntoView({
             behavior: 'smooth',
             block: 'center'
           });
         } else {
-          // When closing, ensure the header is still visible by scrolling to top of the item
           faqRefs.current[i]?.scrollIntoView({
             behavior: 'smooth',
             block: 'nearest'
           });
         }
       }
-    }, 150); // Small delay to let the grid transition begin
+    }, 150);
   };
 
   const ctaText = ctaVariation === 'A' ? 'Claim My Scripts' : 'Get Instant Access';
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-rose-100 selection:text-rose-900">
-      {/* Scroll Progress Bar */}
       <div className="scroll-progress" style={{ width: `${scrollProgress}%` }}></div>
 
-      {/* Sticky Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-3' : 'bg-transparent py-5'}`}>
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center space-x-2 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
@@ -279,7 +306,6 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-rose-50/50">
         <div className="absolute top-0 right-0 -mr-24 -mt-24 opacity-10 pointer-events-none">
           <Heart size={400} className="text-rose-600 rotate-12" />
@@ -313,7 +339,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Social Proof Bar */}
       <div className="bg-slate-900 py-8 overflow-hidden">
         <div className="container mx-auto px-4 flex flex-wrap justify-center items-center gap-8 md:gap-16">
           <div className="text-white/40 font-bold uppercase tracking-widest text-sm flex items-center hover:text-white transition-colors duration-300"><Zap size={20} className="mr-2 text-rose-500" /> Therapist-Grade</div>
@@ -323,7 +348,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Vault breakdown */}
       <section id="vault" className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -362,11 +386,9 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Pricing Section with Visual Flourish */}
       <section id="pricing" className="py-24 bg-rose-50 relative overflow-hidden">
         <div className="container mx-auto px-4 flex flex-col items-center">
           <div className="max-w-4xl w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden border-4 border-rose-600 relative z-10 pricing-card transition-all duration-700 hover:shadow-rose-200/60">
-            {/* Enhanced Ribbon with Looping Glow */}
             <div className="ribbon">
               <span className="ribbon-inner animate-ribbon-glow">Most Popular</span>
             </div>
@@ -439,7 +461,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials with staggered animation */}
       <section className="py-24 bg-white overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-black uppercase tracking-tighter mb-16">Real Couples. Real Breakthroughs.</h2>
@@ -451,7 +472,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Section with Refined Transitions */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
@@ -484,7 +504,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Final CTA with Glow */}
       <section className="py-24 bg-rose-600 text-white text-center relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Your relationship is worth $27.</h2>
@@ -501,7 +520,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="py-12 bg-slate-950 text-slate-500 text-sm">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-8 group cursor-default">
@@ -514,7 +532,6 @@ const App: React.FC = () => {
 
       <LiveChat />
 
-      {/* Scroll to Top Button */}
       {showScrollTop && (
         <button 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -525,7 +542,6 @@ const App: React.FC = () => {
         </button>
       )}
 
-      {/* Exit Intent Popup */}
       {showExitPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-500" onClick={() => setShowExitPopup(false)}></div>
