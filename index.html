@@ -22,88 +22,58 @@
     </script>
     <!-- End Facebook Pixel Code -->
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thescriptvault.store/" />
-    <meta property="og:title" content="The Valentine's Love Script Vault | 87+ Proven Scripts" />
-    <meta property="og:description" content="Transform your relationship with therapist-grade scripts. From resolving conflict to rebuilding intimacy." />
-    <meta property="og:image" content="https://picsum.photos/1200/630?random=love" />
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
+      :root {
+        --rose-600: #e11d48;
+      }
       body {
         font-family: 'Inter', sans-serif;
         background-color: #fff;
+        scroll-behavior: smooth;
       }
       h1, h2, h3, .serif {
         font-family: 'Playfair Display', serif;
       }
       @keyframes fade-in-up {
-        from { opacity: 0; transform: translateY(40px); }
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
       }
       .animate-fade-in-up {
-        animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
       @keyframes pulse-soft {
         0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.04); opacity: 0.95; }
+        50% { transform: scale(1.05); opacity: 0.9; }
       }
       .animate-pulse-soft {
-        animation: pulse-soft 2.5s infinite ease-in-out;
-      }
-      @keyframes ribbon-glow {
-        0%, 100% { box-shadow: 0 5px 15px rgba(0,0,0,.2); }
-        50% { box-shadow: 0 0 40px rgba(250, 204, 21, 0.8); }
-      }
-      .animate-ribbon-glow {
-        animation: ribbon-glow 3s infinite ease-in-out;
+        animation: pulse-soft 3s infinite ease-in-out;
       }
       .scroll-progress {
         position: fixed;
         top: 0;
         left: 0;
         height: 4px;
-        background: #e11d48;
+        background: var(--rose-600);
         z-index: 1000;
         transition: width 0.1s ease-out;
       }
-      .ribbon {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-        z-index: 10;
+      .badge-spin {
+        animation: rotate 20s linear infinite;
       }
-      .ribbon-inner {
-        position: absolute;
-        display: block;
-        width: 225px;
-        padding: 10px 0;
-        background-color: #facc15;
-        color: #000;
-        font-weight: 900;
-        font-size: 12px;
-        text-transform: uppercase;
-        text-align: center;
-        left: -35px;
-        top: 30px;
-        transform: rotate(45deg);
-        letter-spacing: 0.1em;
-      }
-      @keyframes badge-spin {
+      @keyframes rotate {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
       }
-      .badge-spin {
-        animation: badge-spin 15s linear infinite;
+      .premium-gradient {
+        background: linear-gradient(135deg, #fff1f2 0%, #fff 100%);
       }
     </style>
+
     <script type="importmap">
 {
   "imports": {
