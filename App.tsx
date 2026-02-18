@@ -214,6 +214,15 @@ const App: React.FC = () => {
 
   const redirectToPurchase = () => {
     console.log(`Tracking: Clicked CTA variation ${ctaVariation}`);
+    // FB Pixel Conversion Tracking
+    if (typeof (window as any).fbq === 'function') {
+      (window as any).fbq('track', 'InitiateCheckout', {
+        value: PRICE,
+        currency: 'USD',
+        content_name: "Valentine's Love Script Vault",
+        content_category: 'Digital Product'
+      });
+    }
     window.open(PURCHASE_URL, '_blank');
   };
 
