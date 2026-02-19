@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,92 +8,169 @@
     <meta name="description" content="Stop winging your most important conversations. Get 87+ therapist-grade, word-for-word scripts to turn relationship disconnection into deep intimacy. One-time payment of $27." />
     <meta name="keywords" content="relationship communication, marriage scripts, couple intimacy, conflict resolution, love scripts, Nina James, relationship advice" />
     
-    <!-- Facebook Pixel Code -->
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1523624709320763');
-      fbq('track', 'PageView');
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://love-script-vault.com/" />
+    <meta property="og:title" content="The Valentine's Love Script Vault | 87+ Proven Scripts" />
+    <meta property="og:description" content="Transform your relationship with therapist-grade scripts. From resolving conflict to rebuilding intimacy." />
+    <meta property="og:image" content="https://picsum.photos/1200/630?random=love" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="The Valentine's Love Script Vault" />
+    <meta property="twitter:description" content="Stop winging it. Start communicating like a pro. 87+ scripts for couples." />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "Valentine's Love Script Vault",
+        "image": "https://picsum.photos/800/800?random=vault",
+        "description": "A collection of 87+ therapist-grade communication scripts for couples to improve intimacy and resolve conflict.",
+        "brand": {
+          "@type": "Brand",
+          "name": "Nina James"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://stan.store/jaimz247/p/get-the-valentines-love-script-vault-now",
+          "priceCurrency": "USD",
+          "price": "27.00",
+          "availability": "https://schema.org/InStock"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "124"
+        }
+      }
     </script>
-    <!-- End Facebook Pixel Code -->
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --rose-600: #e11d48;
-      }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #fff;
-        scroll-behavior: smooth;
-        -webkit-font-smoothing: antialiased;
       }
       h1, h2, h3, .serif {
         font-family: 'Playfair Display', serif;
       }
+      .scroll-mt-nav {
+        scroll-margin-top: 5rem;
+      }
       @keyframes fade-in-up {
-        from { opacity: 0; transform: translateY(30px); }
+        from { opacity: 0; transform: translateY(40px); }
         to { opacity: 1; transform: translateY(0); }
       }
       .animate-fade-in-up {
-        animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
       @keyframes pulse-soft {
         0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+        50% { transform: scale(1.04); opacity: 0.95; }
       }
       .animate-pulse-soft {
-        animation: pulse-soft 3s infinite ease-in-out;
+        animation: pulse-soft 2.5s infinite ease-in-out;
+      }
+      @keyframes cta-pulse {
+        0% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.4); }
+        50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(225, 29, 72, 0.6); }
+        100% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.4); }
+      }
+      .cta-hover-pulse:hover {
+        animation: cta-pulse 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
+      }
+      @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 10px rgba(225, 29, 72, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(225, 29, 72, 0.6); }
+      }
+      .animate-glow-pulse {
+        animation: glow-pulse 2s infinite ease-in-out;
+      }
+      @keyframes soft-attention {
+        0%, 100% { transform: scale(1); filter: brightness(1); }
+        50% { transform: scale(1.015); filter: brightness(1.08); }
+      }
+      .animate-soft-attention {
+        animation: soft-attention 3s infinite ease-in-out;
+      }
+      @keyframes ribbon-glow {
+        0%, 100% { box-shadow: 0 5px 15px rgba(0,0,0,.2); }
+        50% { box-shadow: 0 0 40px rgba(250, 204, 21, 0.8); }
+      }
+      .animate-ribbon-glow {
+        animation: ribbon-glow 3s infinite ease-in-out;
+      }
+      .faq-content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 450ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .faq-content.open {
+        grid-template-rows: 1fr;
+      }
+      .faq-inner {
+        overflow: hidden;
       }
       .scroll-progress {
         position: fixed;
         top: 0;
         left: 0;
         height: 4px;
-        background: var(--rose-600);
+        background: #e11d48;
         z-index: 1000;
         transition: width 0.1s ease-out;
       }
-      .badge-spin {
-        animation: rotate 20s linear infinite;
+      .ribbon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        z-index: 10;
       }
-      @keyframes rotate {
+      .ribbon-inner {
+        position: absolute;
+        display: block;
+        width: 225px;
+        padding: 10px 0;
+        background-color: #facc15;
+        color: #000;
+        font-weight: 900;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-align: center;
+        left: -35px;
+        top: 30px;
+        transform: rotate(45deg);
+        letter-spacing: 0.1em;
+        transition: all 0.5s ease;
+      }
+      @keyframes badge-spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
       }
-      .premium-gradient {
-        background: linear-gradient(135deg, #fffcfc 0%, #ffffff 100%);
-      }
-      .glass {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+      .badge-spin {
+        animation: badge-spin 15s linear infinite;
       }
     </style>
-
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
-  </head>
+</head>
   <body>
     <div id="root"></div>
   </body>
